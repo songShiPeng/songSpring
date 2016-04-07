@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"  
+ xmlns:context="http://www.springframework.org/schema/context"  
+ xmlns:p="http://www.springframework.org/schema/p"  
+ xmlns:aop="http://www.springframework.org/schema/aop"
+ xmlns:mvc="http://www.springframework.org/schema/mvc"  
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+ xsi:schemaLocation="http://www.springframework.org/schema/beans  
+      http://www.springframework.org/schema/beans/spring-beans-3.0.xsd  
+      http://www.springframework.org/schema/context  
+      http://www.springframework.org/schema/context/spring-context.xsd  
+      http://www.springframework.org/schema/aop 
+      http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+      http://www.springframework.org/schema/mvc  
+      http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
+ <context:component-scan base-package="testAOP" /> 
+ <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+
+ 
+<bean id="BeforAdvice" class="testAOP.BeforeAcvise"></bean>
+<bean id="AfterException" class="testAOP.AfterException"></bean>
+
+<!--**********************第一种xml配置方式*******************-->
+<!-- 配置代理 -->
+<!-- 
+<bean id="reception" class="org.springframework.aop.framework.ProxyFactoryBean">
+制定代理接口
+<property name="proxyInterfaces" value="testAOP.ReceptionInterface"/> 
+指定通知
+<property name="interceptorNames" value="BeforAdvice"/>
+指定目标对象
+<property name="target" ref="target"/>
+使用GGLIB作为代理
+<property name="proxyTargetClass" value="true"/>
+</bean>
+<bean id="target" class="testAOP.Reception"/>
+ -->
+ 
+ 
+<!--**********************第二种xml配置方式*******************-->
+
+
+<!-- <aop:config proxy-target-class="true">
+<aop:pointcut expression="execution(public * testAOP.Reception.*())" id="RecetionPointcut"/>
+<aop:advisor advice-ref="BeforAdvice" pointcut-ref="RecetionPointcut"/>
+异常通知
+<aop:advisor advice-ref="AfterException" pointcut-ref="RecetionPointcut"/>
+</aop:config> 
+ -->
+
+
+<!--**********************第三种xml配置方式*******************-->
+<!-- 此xml方式与第二种不同，通知类不必继承系统类，方法参数需指定 -->
+<aop:config proxy-target-class="true">
+<aop:aspect id="TestAspect" ref="BeforAdvice">
+<!-- args(..)用来传递到BeforAdvise中before2参数 -->
+<aop:pointcut  expression="execution (public void testAOP.Reception.*(..)) and args(..)" id="RecetionPointcut"/>
+<aop:pointcut  expression="execution (public * testAOP.Reception.*(..))  and args(..)" id="ExceptionPointcut"/>
+<aop:before  pointcut-ref="RecetionPointcut" method="before2"/> 
+<aop:after-returning pointcut-ref="RecetionPointcut" method="before2"/> 
+<aop:after-throwing  pointcut-ref="ExceptionPointcut" method="afterThrow"/>
+<aop:around pointcut-ref="RecetionPointcut" method="arroundTest"/>
+</aop:aspect>
+
+</aop:config>
+<bean id="reception" class="testAOP.Reception"></bean>
+</beans>
