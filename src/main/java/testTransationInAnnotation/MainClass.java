@@ -10,9 +10,9 @@ public class MainClass {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-		AnnotationConfigApplicationContext appCon=new AnnotationConfigApplicationContext(TransactionConfig.class);
+		AnnotationConfigApplicationContext appCon=new AnnotationConfigApplicationContext(TransactionConfigInTemplate.class);
 		AccountService accountService=appCon.getBean(AccountService.class);
-		accountService.transferMoney(1,2, 100);
+		accountService.transferMoney(2,1, 150);
 	}
 
 }

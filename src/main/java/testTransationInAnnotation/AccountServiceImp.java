@@ -3,14 +3,17 @@ package testTransationInAnnotation;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import javax.sql.DataSource;
+
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class AccountServiceImp implements AccountService{
 	
 	private DataSource dataSource;
+	private TransactionTemplate transactionTemplate;
 	
 	/**
 	 *转账
@@ -20,7 +23,7 @@ public class AccountServiceImp implements AccountService{
 	 * @throws Exception 
 	 */
 	@Override
-	@Transactional (rollbackFor=Exception.class)
+	//@Transactional (rollbackFor=Exception.class)
 	public void transferMoney(long sourceAccountId, long targetAccountId,
 			double amount) throws Exception {
 		Connection connection=DataSourceUtils.getConnection(dataSource);
@@ -48,5 +51,12 @@ public class AccountServiceImp implements AccountService{
 	
 	public void setDataSource(DataSource dataSource){
 		this.dataSource=dataSource;
+	}
+	
+	/**
+	 * 编程式事务管理需注入
+	 */
+	public void setTransactionTemplate(TransactionTemplate t){
+		this.transactionTemplate=t;
 	}
 }
